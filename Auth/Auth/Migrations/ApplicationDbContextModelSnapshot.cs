@@ -44,6 +44,8 @@ namespace Auth.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email");
+
                     b.ToTable("Users");
                 });
 #pragma warning restore 612, 618

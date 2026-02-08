@@ -9,6 +9,7 @@ namespace Auth.Interfaces
     public interface IUserService
     {
         Task<User> CreateAsync(string email, string password);
+        Task<User> GetByEmailAsync(string email);
         Task<bool> UserExistsAsync(string email);
     }
 }

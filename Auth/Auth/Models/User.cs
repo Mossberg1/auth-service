@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Auth.Models
 {
+    [Index(nameof(Email))]
     public class User : BaseModel
     {
         public string Email { get; set; }
