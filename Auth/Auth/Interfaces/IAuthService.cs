@@ -1,7 +1,9 @@
-﻿namespace Auth.Interfaces
+﻿using Auth.Dtos;
+
+namespace Auth.Interfaces
 {
     public interface IAuthService
     {
-        Task<string> LoginAsync(string email, string password);
+        Task<TokenDto> LoginAsync(string email, string password);
     }
 }

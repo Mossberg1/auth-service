@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Auth.Models
 {
-    [Index(nameof(Email))]
+    [Index(nameof(Email), IsUnique = true)]
     public class User : BaseModel
     {
         public string Email { get; set; }

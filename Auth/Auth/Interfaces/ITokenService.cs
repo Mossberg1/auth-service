@@ -9,6 +9,7 @@ namespace Auth.Interfaces
 {
     public interface ITokenService
     {
-        string Generate(User user);
+        string GenerateAccessToken(User user);
+        Task<string> GenerateRefreshTokenAsync(User user);
     }
 }

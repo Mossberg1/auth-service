@@ -15,21 +15,19 @@ namespace Auth.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ITokenService _tokenService;
         private readonly IAuthService _authService;
 
-        public AuthController(IUserService userService, ITokenService tokenService, IAuthService authService)
+        public AuthController(IUserService userService, IAuthService authService)
         {
             _userService = userService;
-            _tokenService = tokenService;
             _authService = authService;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto) 
         {
-            var accessToken = await _authService.LoginAsync(loginDto.Email, loginDto.Password);
-            return Ok(new { token = accessToken });
+            var tokens = await _authService.LoginAsync(loginDto.Email, loginDto.Password);
+            return Ok(tokens);
         }
 
         [HttpPost("register")]
@@ -41,9 +39,9 @@ namespace Auth.Controllers
             }
 
             var user = await _userService.CreateAsync(createDto.Email, createDto.Password);
-            var accessToken = _tokenService.Generate(user);
+            var tokens = await _authService.LoginAsync(createDto.Email, createDto.Password);
 
-            return Ok(new { token =  accessToken });
+            return Ok(tokens);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Auth.Interfaces;
+﻿using Auth.Dtos;
+using Auth.Interfaces;
+using Auth.Models;
 
 namespace Auth.Services
 {
@@ -15,7 +17,7 @@ namespace Auth.Services
             _tokenService = tokenService;
         }
 
-        public async Task<string> LoginAsync(string email, string password)
+        public async Task<TokenDto> LoginAsync(string email, string password)
         {
             var user = await _userService.GetByEmailAsync(email);
             var verified = _hashService.Verify(password, user.Password);
@@ -24,7 +26,10 @@ namespace Auth.Services
                 throw new UnauthorizedAccessException();
             }
 
-            return _tokenService.Generate(user);
+            var accessToken = _tokenService.GenerateAccessToken(user);
+            var refreshToken = await _tokenService.GenerateRefreshTokenAsync(user); ;
+
+            return new TokenDto(accessToken, refreshToken); 
         }
     }
 }

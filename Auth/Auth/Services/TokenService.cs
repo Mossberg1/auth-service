@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Auth.Data;
 using Auth.Interfaces;
 using Auth.Models;
 using Microsoft.IdentityModel.Tokens;
@@ -14,13 +15,15 @@ namespace Auth.Services
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _conf;
+        private readonly ApplicationDbContext _dbContext;
 
-        public TokenService(IConfiguration conf)
+        public TokenService(IConfiguration conf, ApplicationDbContext db)
         {
             _conf = conf;
+            _dbContext = db;
         }
 
-        public string Generate(User user)
+        public string GenerateAccessToken(User user)
         {
             var claims = CreateClaims(user);
 
@@ -30,6 +33,16 @@ namespace Auth.Services
             var token = CreateToken(claims, creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<string> GenerateRefreshTokenAsync(User user)
+        {
+            var refreshToken = new RefreshToken(user);
+
+            await _dbContext.RefreshTokens.AddAsync(refreshToken);
+            await _dbContext.SaveChangesAsync();
+
+            return refreshToken.Token;
         }
 
         private Claim[] CreateClaims(User user)

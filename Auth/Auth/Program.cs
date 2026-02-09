@@ -1,4 +1,5 @@
 using System.Text;
+using Auth.BackgroundServices;
 using Auth.Data;
 using Auth.Interfaces;
 using Auth.Services;
@@ -37,6 +38,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddHostedService<RefreshTokenCleanupService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
