@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Auth.Dtos;
 using Auth.Interfaces;
 using Auth.Models;
 using Auth.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Auth.Controllers
@@ -28,6 +30,26 @@ namespace Auth.Controllers
         {
             var tokens = await _authService.LoginAsync(loginDto.Email, loginDto.Password);
             return Ok(tokens);
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout() 
+        {
+            var id = HttpContext.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (id == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!Guid.TryParse(id, out var guid))
+            {
+                return Unauthorized();
+            }
+
+            await _authService.LogoutAsync(guid);
+
+            return Ok();
         }
 
         [HttpPost("register")]

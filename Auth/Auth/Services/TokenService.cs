@@ -17,6 +17,8 @@ namespace Auth.Services
         private readonly IConfiguration _conf;
         private readonly ApplicationDbContext _dbContext;
 
+        private const int _accessTokenLifetimeMinutes = 15;
+
         public TokenService(IConfiguration conf, ApplicationDbContext db)
         {
             _conf = conf;
@@ -60,7 +62,7 @@ namespace Auth.Services
                 issuer: _conf["JwtSettings:Issuer"],
                 audience: _conf["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddMinutes(_accessTokenLifetimeMinutes),
                 signingCredentials: creds
             );
         }
