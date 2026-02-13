@@ -65,6 +65,13 @@ namespace Auth.Controllers
 
             return Ok(tokens);
         }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] string refreshToken) 
+        {
+            var tokens = await _authService.RefreshAccessToken(refreshToken);
+            return Ok(tokens);
+        }
     }
 }
 

@@ -42,5 +42,25 @@ namespace Auth.Services
                 .Where(rt => rt.UserId == userId)
                 .ExecuteDeleteAsync();
         }
+
+        public async Task<TokenDto> RefreshAccessToken(string refreshToken) 
+        {
+            var currentToken = await _dbContext.RefreshTokens
+                .Include(rt => rt.User)
+                .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
+
+            if (currentToken == null || currentToken.ExpiresAt < DateTime.UtcNow)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            var newAccessToken = _tokenService.GenerateAccessToken(currentToken.User);
+            var newRefreshToken = await _tokenService.GenerateRefreshTokenAsync(currentToken.User);
+
+            _dbContext.RefreshTokens.Remove(currentToken);
+            await _dbContext.SaveChangesAsync();
+
+            return new TokenDto(newAccessToken, newRefreshToken);
+        }
     }
 }

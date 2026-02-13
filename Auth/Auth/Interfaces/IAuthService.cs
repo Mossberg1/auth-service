@@ -6,5 +6,6 @@ namespace Auth.Interfaces
     {
         Task<TokenDto> LoginAsync(string email, string password);
         Task LogoutAsync(Guid userId);
+        Task<TokenDto> RefreshAccessToken(string refreshToken);
     }
 }
